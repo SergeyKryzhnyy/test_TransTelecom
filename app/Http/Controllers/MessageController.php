@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SendMail;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class MessageController extends Controller
 {
@@ -26,6 +28,8 @@ class MessageController extends Controller
 
         $new_message->save();
 
+        $send_email = new SendMail($new_message);
+        Mail::to('si-man1704@yandex.ru')->send($send_email);
         return redirect('/');
     }
 

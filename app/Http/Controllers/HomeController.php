@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
@@ -29,7 +30,11 @@ class HomeController extends Controller
     public function index()
     {
 
-
+        if (!Auth::check())// сбросы для неавторизованных
+        {
+            $time_session = 0;
+            $user_role = 0;
+        }
         session(['user_timeout'=>true]);
         $user = User::all()->where('id','==', Auth::id());
         foreach ($user as $value)
@@ -48,9 +53,7 @@ class HomeController extends Controller
        {
            $id_users[] = $message->id_user;
        }
-
        $user_names = User::all();
-
 
        return view('index', ['messages'=>$messages, 'user_timeout'=>session('user_timeout'), 'user_role'=>$user_role, 'user_names'=>$user_names]);
     }
