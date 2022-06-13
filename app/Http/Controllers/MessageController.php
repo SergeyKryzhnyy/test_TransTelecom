@@ -13,7 +13,6 @@ class MessageController extends Controller
 
     public function addNewMessage(Request $request)
     {
-
         $new_message = new  Message();
         $new_message->message =  $request->newMessage;
 
@@ -29,7 +28,7 @@ class MessageController extends Controller
         $new_message->save();
 
         $send_email = new SendMail($new_message);
-        Mail::to('si-man1704@yandex.ru')->send($send_email);
+        Mail::to(config('admin_email'))->send($send_email);
         return redirect('/');
     }
 
@@ -46,6 +45,4 @@ class MessageController extends Controller
         $message->save();
         return redirect('/');
     }
-
 }
-

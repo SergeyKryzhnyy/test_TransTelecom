@@ -31,8 +31,7 @@ class SendMail extends Mailable
     public function build()
     {
 
-        return $this->from('si-man1704@yandex.ru', 'Admin')
+        return $this->from(config('admin_email'), 'Admin')
             ->view('email');
-        //return $this->view('view.name');
     }
 }

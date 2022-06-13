@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use League\Flysystem\Config;
 
 class HomeController extends Controller
 {
@@ -30,32 +31,27 @@ class HomeController extends Controller
     public function index()
     {
 
-        if (!Auth::check())// сбросы для неавторизованных
-        {
-            $time_session = 0;
-            $user_role = 0;
-        }
-        session(['user_timeout'=>true]);
-        $user = User::all()->where('id','==', Auth::id());
-        foreach ($user as $value)
-        {
-            $user_role = $value['user_role'];
-            $time_session = $value['session_start'];
-        }
+       $messages =  Message::getAllMessages();//здесь я беру все сообщения и переписываю столбец user_id (пишу в него name из таблицы users)
 
-        if (time() - strtotime($time_session) > 7200)
-        {
-            session(['user_timeout'=>false]);
-        }
-
-       $messages =  DB::table('messages')->orderBy('updated_at', 'desc')->paginate(5);
        foreach ($messages as $message)
        {
            $id_users[] = $message->id_user;
+           $created_at[] = $message->created_at;
        }
-       $user_names = User::all();
 
-       return view('index', ['messages'=>$messages, 'user_timeout'=>session('user_timeout'), 'user_role'=>$user_role, 'user_names'=>$user_names]);
+        for ($i=0;$i<count($created_at);$i++)
+        {
+            if (time() - strtotime($created_at[$i])>config('message_timeout'))
+            {
+                $message_timeout[] = false;
+            }
+            else
+            {
+                $message_timeout[] = true;
+            }
+        }
+
+       return view('index', ['messages'=>$messages, 'message_timeout'=>$message_timeout]);
     }
 
 }

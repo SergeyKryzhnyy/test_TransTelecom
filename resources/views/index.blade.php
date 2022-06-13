@@ -165,12 +165,8 @@
                     <div class="row">
                         {{ $message->message }}
                         автор:
-                        @foreach($user_names as $name)
-                            @if($name->id == $message->id_user)
-                                {{$name->name}}
-                            @endif
+                        {{$message->id_user}}
 
-                        @endforeach
 
                         @if(Auth::id() == 1)
                             <div class="row">
@@ -189,7 +185,7 @@
                                 </div>
                             </div>
                         @endif
-                        @if(session('user_timeout'))
+                        @if($message_timeout[0])
                             @if($message->id_user == Auth::id())
                                 <div class="row">
                                     <div class="col-1">
@@ -235,7 +231,6 @@
 <div class="row">
     <div class="col-1">
 {{ $messages->links() }}
-{{--        {{$messages->appends(['sort'=>request()->sort])->links()}}--}}
     </div>
 </div>
 </body>
